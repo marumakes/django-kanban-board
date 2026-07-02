@@ -7,7 +7,7 @@ class Board(models.Model):
     created_at = models.DateTimeField(auto_now_add = True)
 
 class List(models.Model):
-    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='list')
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='lists')
     name = models.CharField(max_length=100)
     position = models.PositiveIntegerField(default = 0)
 

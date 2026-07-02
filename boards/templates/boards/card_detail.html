@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}{{ card.title }}{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto">
+  <a href="{% url 'board_detail' card.list.board_id %}" class="text-sm text-blue-600 hover:underline">
+    &larr; Back to board
+  </a>
+
+  <div class="bg-white p-6 rounded-lg shadow mt-3">
+    <h1 class="text-xl font-bold mb-4 text-gray-800">Edit Card</h1>
+    <form method="post" class="space-y-3">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        Save
+      </button>
+    </form>
+
+    <form method="post" action="{% url 'card_delete' card.id %}" class="mt-4 pt-4 border-t border-gray-200">
+      {% csrf_token %}
+      <button type="submit" class="text-red-600 text-sm hover:underline">
+        Delete card
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

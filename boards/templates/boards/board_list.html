@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Your Boards{% endblock %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold text-gray-800">Your Boards</h1>
+    <a href="{% url 'board_create' %}" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      New Board
+    </a>
+  </div>
+  <ul class="space-y-2">
+    {% for board in boards %}
+    <li class="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow">
+      <a href="{% url 'board_detail' board.id %}" class="text-lg font-medium text-gray-800">
+        {{ board.name }}
+      </a>
+    </li>
+    {% empty %}
+    <li class="text-gray-500 text-center py-8">
+      No boards yet — create your first one above.
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

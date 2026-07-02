@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}{{ board.name }}{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-800">{{ board.name }}</h1>
+  <a href="{% url 'board_list' %}" class="text-sm text-blue-600 hover:underline">&larr; All boards</a>
+</div>
+
+<div class="flex gap-4 items-start overflow-x-auto pb-4">
+  {% for list in lists %}
+  <div class="bg-gray-200 rounded-lg p-3 w-72 flex-shrink-0">
+    <h2 class="font-semibold text-gray-700 mb-3 px-1">{{ list.name }}</h2>
+
+    <div class="space-y-2 mb-3">
+      {% for card in list.cards.all %}
+      <a href="{% url 'card_detail' card.id %}"
+         class="block bg-white p-3 rounded shadow-sm text-sm text-gray-800 hover:shadow-md transition-shadow">
+        {{ card.title }}
+      </a>
+      {% empty %}
+      <p class="text-xs text-gray-400 px-1">No cards yet</p>
+      {% endfor %}
+    </div>
+
+    <form method="post" action="{% url 'card_create' list.id %}" class="flex gap-1">
+      {% csrf_token %}
+      {{ card_form.title }}
+      <button type="submit"
+              class="shrink-0 bg-blue-600 text-white text-sm px-3 rounded hover:bg-blue-700">
+        Add
+      </button>
+    </form>
+  </div>
+  {% endfor %}
+
+  <div class="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-3 w-72 flex-shrink-0">
+    <h2 class="font-semibold text-gray-500 mb-3 px-1">Add another list</h2>
+    <form method="post" action="{% url 'list_create' board.id %}" class="flex gap-1">
+      {% csrf_token %}
+      {{ list_form.name }}
+      <button type="submit"
+              class="shrink-0 bg-blue-600 text-white text-sm px-3 rounded hover:bg-blue-700">
+        Add
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}
