@@ -1,72 +1,72 @@
 {% extends "base.html" %}
 {% block title %}{{ board.name }}{% endblock %}
 {% block content %}
-<div class="flex items-center justify-between mb-6">
+<div class="flex items-center justify-between mb-8">
   <div>
-    <a href="{% url 'board_list' %}" class="text-xs text-zinc-500 hover:text-emerald-400">&larr; All boards</a>
-    <h1 class="text-2xl font-bold text-zinc-100 mt-1">{{ board.name }}</h1>
+    <a href="{% url 'board_list' %}" class="text-xs text-zinc-500 hover:text-emerald-400 transition-colors">&larr; All boards</a>
+    <h1 class="text-2xl font-semibold text-zinc-100 mt-1">{{ board.name }}</h1>
   </div>
-  <div class="flex items-center gap-3 text-sm">
-    <a href="{% url 'board_update' board.id %}" class="text-zinc-400 hover:text-emerald-400">Edit</a>
-    <a href="{% url 'board_delete' board.id %}" class="text-zinc-400 hover:text-red-400">Delete</a>
+  <div class="flex items-center gap-4 text-sm">
+    <a href="{% url 'board_update' board.id %}" class="text-zinc-400 hover:text-emerald-400 transition-colors">Edit</a>
+    <a href="{% url 'board_delete' board.id %}" class="text-zinc-400 hover:text-red-400 transition-colors">Delete</a>
   </div>
 </div>
 
-<div id="board-columns" class="flex gap-4 items-start overflow-x-auto pb-4">
+<div id="board-columns" class="flex gap-5 items-start overflow-x-auto pb-4 snap-x snap-proximity">
   {% for list in lists %}
-  <div class="list-column bg-zinc-900 border border-zinc-800 rounded-lg p-3 w-72 flex-shrink-0" data-list-id="{{ list.id }}">
-    <div class="flex items-center justify-between mb-3 px-1">
-      <div class="flex items-center gap-1 min-w-0">
+  <div class="list-column snap-start bg-zinc-800 border border-zinc-700/60 rounded-xl p-4 w-72 flex-shrink-0" data-list-id="{{ list.id }}">
+    <div class="flex items-center justify-between mb-4 px-1">
+      <div class="flex items-center gap-1.5 min-w-0">
         <span class="list-drag-handle cursor-grab text-zinc-600 hover:text-zinc-400 select-none">&#8942;&#8942;</span>
         <h2 class="font-semibold text-zinc-200 text-sm truncate">{{ list.name }}</h2>
       </div>
 
       <details class="relative">
         <summary class="cursor-pointer text-zinc-500 hover:text-zinc-200 list-none px-1 select-none">&#8942;</summary>
-        <div class="absolute right-0 mt-2 w-56 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl p-3 z-10 space-y-3">
-          <form method="post" action="{% url 'list_update' list.id %}" class="flex gap-1">
+        <div class="absolute right-0 mt-2 w-56 bg-zinc-700 border border-zinc-600 rounded-lg shadow-xl p-3 z-10 space-y-3">
+          <form method="post" action="{% url 'list_update' list.id %}" class="flex gap-1.5">
             {% csrf_token %}
-            <input type="text" name="name" value="{{ list.name }}" class="!py-1 !text-xs">
-            <button type="submit" class="shrink-0 text-xs bg-emerald-600 text-white px-2 rounded hover:bg-emerald-500">
+            <input type="text" name="name" value="{{ list.name }}" class="!py-1.5 !text-xs !bg-zinc-800">
+            <button type="submit" class="shrink-0 text-xs bg-emerald-600 text-white px-2.5 rounded-md hover:bg-emerald-500 transition-colors">
               Save
             </button>
           </form>
           <form method="post" action="{% url 'list_delete' list.id %}"
                 onsubmit="return confirm('Delete this list and all its cards?');">
             {% csrf_token %}
-            <button type="submit" class="text-xs text-red-400 hover:text-red-300">Delete list</button>
+            <button type="submit" class="text-xs text-red-400 hover:text-red-300 transition-colors">Delete list</button>
           </form>
         </div>
       </details>
     </div>
 
-    <div class="card-list space-y-2 mb-3 min-h-[1.5rem]" data-list-id="{{ list.id }}">
+    <div class="card-list space-y-2.5 mb-4 min-h-[1.5rem]" data-list-id="{{ list.id }}">
       {% for card in list.cards.all %}
       <a href="{% url 'card_detail' card.id %}" data-card-id="{{ card.id }}"
-         class="block bg-zinc-800 border border-zinc-700 p-3 rounded text-sm text-zinc-100 hover:border-emerald-600 transition-colors cursor-grab">
+         class="block bg-zinc-700 border border-zinc-600/70 p-3.5 rounded-lg text-sm text-zinc-100 hover:border-emerald-500/70 hover:shadow-md hover:shadow-black/20 transition-all cursor-grab">
         {{ card.title }}
       </a>
       {% endfor %}
     </div>
 
-    <form method="post" action="{% url 'card_create' list.id %}" class="flex gap-1">
+    <form method="post" action="{% url 'card_create' list.id %}" class="flex gap-1.5">
       {% csrf_token %}
       {{ card_form.title }}
       <button type="submit"
-              class="shrink-0 bg-emerald-600 text-white text-sm px-3 rounded hover:bg-emerald-500">
+              class="shrink-0 bg-emerald-600 text-white text-sm px-3.5 rounded-lg hover:bg-emerald-500 transition-colors">
         Add
       </button>
     </form>
   </div>
   {% endfor %}
 
-  <div class="add-list-column bg-zinc-900/40 border-2 border-dashed border-zinc-800 rounded-lg p-3 w-72 flex-shrink-0">
-    <h2 class="font-semibold text-zinc-500 mb-3 px-1 text-sm">Add another list</h2>
-    <form method="post" action="{% url 'list_create' board.id %}" class="flex gap-1">
+  <div class="add-list-column snap-start bg-zinc-800/30 border-2 border-dashed border-zinc-700/60 rounded-xl p-4 w-72 flex-shrink-0">
+    <h2 class="font-semibold text-zinc-500 mb-4 px-1 text-sm">Add another list</h2>
+    <form method="post" action="{% url 'list_create' board.id %}" class="flex gap-1.5">
       {% csrf_token %}
       {{ list_form.name }}
       <button type="submit"
-              class="shrink-0 bg-emerald-600 text-white text-sm px-3 rounded hover:bg-emerald-500">
+              class="shrink-0 bg-emerald-600 text-white text-sm px-3.5 rounded-lg hover:bg-emerald-500 transition-colors">
         Add
       </button>
     </form>

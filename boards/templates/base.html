@@ -4,18 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Kanban Board{% endblock %}</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%2327272a'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='%2310b981' font-family='monospace'>&gt;_</text></svg>">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
     /* Django renders form widgets as plain, unstyled <input>/<textarea> tags.
        These attribute selectors style them consistently without editing every form. */
     input[type="text"], input[type="password"], input[type="email"], textarea {
-      background-color: #18181b; /* zinc-900 */
+      background-color: #09090b; /* zinc-950 — recessed "well" against the surface it sits on */
       border: 1px solid #3f3f46; /* zinc-700 */
-      border-radius: 0.375rem;
-      padding: 0.5rem 0.75rem;
+      border-radius: 0.5rem;
+      padding: 0.625rem 0.875rem;
       width: 100%;
       color: #f4f4f5; /* zinc-100 */
     }
@@ -32,44 +33,44 @@
       font-weight: 500;
       color: #a1a1aa; /* zinc-400 */
       display: block;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.375rem;
       text-transform: uppercase;
       letter-spacing: 0.03em;
     }
     form p {
-      margin-bottom: 0.75rem;
+      margin-bottom: 1rem;
     }
     ul.errorlist {
       color: #f87171; /* red-400 */
       font-size: 0.75rem;
       list-style: none;
       padding: 0;
-      margin: 0.25rem 0 0;
+      margin: 0.375rem 0 0;
     }
     ::-webkit-scrollbar { height: 8px; width: 8px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 9999px; }
   </style>
 </head>
-<body class="bg-zinc-950 text-zinc-100 min-h-screen">
-  <nav class="bg-zinc-900 border-b border-zinc-800 px-6 py-4 flex justify-between items-center">
-    <a href="{% url 'board_list' %}" class="font-bold text-lg text-emerald-400 tracking-tight">
+<body class="bg-zinc-900 text-zinc-100 min-h-screen">
+  <nav class="bg-zinc-800/70 backdrop-blur-sm border-b border-zinc-700/60 px-4 sm:px-6 py-5 flex flex-wrap gap-y-2 justify-between items-center">
+    <a href="{% url 'board_list' %}" class="font-mono font-bold text-lg text-emerald-400 tracking-tight">
       &gt;_ kanban
     </a>
-    <div class="flex items-center gap-4">
+    <div class="flex items-center gap-5">
       {% if user.is_authenticated %}
-        <span class="text-sm text-zinc-400">{{ user.username }}</span>
+        <span class="text-sm text-zinc-400 truncate max-w-[8rem]">{{ user.username }}</span>
         <form method="post" action="{% url 'logout' %}">
           {% csrf_token %}
-          <button type="submit" class="text-sm text-zinc-400 hover:text-emerald-400">Log out</button>
+          <button type="submit" class="text-sm text-zinc-400 hover:text-emerald-400 transition-colors">Log out</button>
         </form>
       {% else %}
-        <a href="{% url 'login' %}" class="text-sm text-zinc-400 hover:text-emerald-400">Log in</a>
-        <a href="{% url 'signup' %}" class="text-sm text-zinc-400 hover:text-emerald-400">Sign up</a>
+        <a href="{% url 'login' %}" class="text-sm text-zinc-400 hover:text-emerald-400 transition-colors">Log in</a>
+        <a href="{% url 'signup' %}" class="text-sm text-zinc-400 hover:text-emerald-400 transition-colors">Sign up</a>
       {% endif %}
     </div>
   </nav>
-  <main class="p-6">
+  <main class="p-4 sm:p-8">
     {% block content %}{% endblock %}
   </main>
 </body>
