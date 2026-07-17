@@ -2,23 +2,49 @@
 {% block title %}{{ board.name }}{% endblock %}
 {% block content %}
 <div class="flex items-center justify-between mb-6">
-  <h1 class="text-2xl font-bold text-gray-800">{{ board.name }}</h1>
-  <a href="{% url 'board_list' %}" class="text-sm text-blue-600 hover:underline">&larr; All boards</a>
+  <div>
+    <a href="{% url 'board_list' %}" class="text-xs text-zinc-500 hover:text-emerald-400">&larr; All boards</a>
+    <h1 class="text-2xl font-bold text-zinc-100 mt-1">{{ board.name }}</h1>
+  </div>
+  <div class="flex items-center gap-3 text-sm">
+    <a href="{% url 'board_update' board.id %}" class="text-zinc-400 hover:text-emerald-400">Edit</a>
+    <a href="{% url 'board_delete' board.id %}" class="text-zinc-400 hover:text-red-400">Delete</a>
+  </div>
 </div>
 
 <div class="flex gap-4 items-start overflow-x-auto pb-4">
   {% for list in lists %}
-  <div class="bg-gray-200 rounded-lg p-3 w-72 flex-shrink-0">
-    <h2 class="font-semibold text-gray-700 mb-3 px-1">{{ list.name }}</h2>
+  <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-3 w-72 flex-shrink-0">
+    <div class="flex items-center justify-between mb-3 px-1">
+      <h2 class="font-semibold text-zinc-200 text-sm truncate">{{ list.name }}</h2>
+
+      <details class="relative">
+        <summary class="cursor-pointer text-zinc-500 hover:text-zinc-200 list-none px-1 select-none">&#8942;</summary>
+        <div class="absolute right-0 mt-2 w-56 bg-zinc-800 border border-zinc-700 rounded-lg shadow-xl p-3 z-10 space-y-3">
+          <form method="post" action="{% url 'list_update' list.id %}" class="flex gap-1">
+            {% csrf_token %}
+            <input type="text" name="name" value="{{ list.name }}" class="!py-1 !text-xs">
+            <button type="submit" class="shrink-0 text-xs bg-emerald-600 text-white px-2 rounded hover:bg-emerald-500">
+              Save
+            </button>
+          </form>
+          <form method="post" action="{% url 'list_delete' list.id %}"
+                onsubmit="return confirm('Delete this list and all its cards?');">
+            {% csrf_token %}
+            <button type="submit" class="text-xs text-red-400 hover:text-red-300">Delete list</button>
+          </form>
+        </div>
+      </details>
+    </div>
 
     <div class="space-y-2 mb-3">
       {% for card in list.cards.all %}
       <a href="{% url 'card_detail' card.id %}"
-         class="block bg-white p-3 rounded shadow-sm text-sm text-gray-800 hover:shadow-md transition-shadow">
+         class="block bg-zinc-800 border border-zinc-700 p-3 rounded text-sm text-zinc-100 hover:border-emerald-600 transition-colors">
         {{ card.title }}
       </a>
       {% empty %}
-      <p class="text-xs text-gray-400 px-1">No cards yet</p>
+      <p class="text-xs text-zinc-600 px-1">No cards yet</p>
       {% endfor %}
     </div>
 
@@ -26,20 +52,20 @@
       {% csrf_token %}
       {{ card_form.title }}
       <button type="submit"
-              class="shrink-0 bg-blue-600 text-white text-sm px-3 rounded hover:bg-blue-700">
+              class="shrink-0 bg-emerald-600 text-white text-sm px-3 rounded hover:bg-emerald-500">
         Add
       </button>
     </form>
   </div>
   {% endfor %}
 
-  <div class="bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg p-3 w-72 flex-shrink-0">
-    <h2 class="font-semibold text-gray-500 mb-3 px-1">Add another list</h2>
+  <div class="bg-zinc-900/40 border-2 border-dashed border-zinc-800 rounded-lg p-3 w-72 flex-shrink-0">
+    <h2 class="font-semibold text-zinc-500 mb-3 px-1 text-sm">Add another list</h2>
     <form method="post" action="{% url 'list_create' board.id %}" class="flex gap-1">
       {% csrf_token %}
       {{ list_form.name }}
       <button type="submit"
-              class="shrink-0 bg-blue-600 text-white text-sm px-3 rounded hover:bg-blue-700">
+              class="shrink-0 bg-emerald-600 text-white text-sm px-3 rounded hover:bg-emerald-500">
         Add
       </button>
     </form>

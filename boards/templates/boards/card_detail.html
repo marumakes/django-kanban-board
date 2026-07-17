@@ -2,23 +2,24 @@
 {% block title %}{{ card.title }}{% endblock %}
 {% block content %}
 <div class="max-w-md mx-auto">
-  <a href="{% url 'board_detail' card.list.board_id %}" class="text-sm text-blue-600 hover:underline">
+  <a href="{% url 'board_detail' card.list.board_id %}" class="text-xs text-zinc-500 hover:text-emerald-400">
     &larr; Back to board
   </a>
 
-  <div class="bg-white p-6 rounded-lg shadow mt-3">
-    <h1 class="text-xl font-bold mb-4 text-gray-800">Edit Card</h1>
+  <div class="bg-zinc-900 border border-zinc-800 p-6 rounded-lg shadow-lg mt-3">
+    <h1 class="text-xl font-bold mb-4 text-zinc-100">Edit Card</h1>
     <form method="post" class="space-y-3">
       {% csrf_token %}
       {{ form.as_p }}
-      <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+      <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-500 text-sm font-medium">
         Save
       </button>
     </form>
 
-    <form method="post" action="{% url 'card_delete' card.id %}" class="mt-4 pt-4 border-t border-gray-200">
+    <form method="post" action="{% url 'card_delete' card.id %}" class="mt-4 pt-4 border-t border-zinc-800"
+          onsubmit="return confirm('Delete this card?');">
       {% csrf_token %}
-      <button type="submit" class="text-red-600 text-sm hover:underline">
+      <button type="submit" class="text-red-400 text-sm hover:text-red-300">
         Delete card
       </button>
     </form>

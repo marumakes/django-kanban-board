@@ -95,3 +95,44 @@ def card_delete(request, card_id):
     if request.method == "POST":
         card.delete()
     return redirect("board_detail", board_id = board_id)
+
+
+@login_required
+def board_update(request, board_id):
+    board = get_object_or_404(Board, id=board_id, owner=request.user)
+    if request.method == "POST":
+        form = BoardForm(request.POST, instance=board)
+        if form.is_valid():
+            form.save()
+            return redirect("board_detail", board_id=board.id)
+    else:
+        form = BoardForm(instance=board)
+    return render(request, "boards/board_form.html", {"form": form, "board": board})
+
+
+@login_required
+def board_delete(request, board_id):
+    board = get_object_or_404(Board, id=board_id, owner=request.user)
+    if request.method == "POST":
+        board.delete()
+        return redirect("board_list")
+    return render(request, "boards/board_confirm_delete.html", {"board": board})
+
+
+@login_required
+def list_update(request, list_id):
+    target_list = get_object_or_404(List, id=list_id, board__owner=request.user)
+    if request.method == "POST":
+        form = ListForm(request.POST, instance=target_list)
+        if form.is_valid():
+            form.save()
+    return redirect("board_detail", board_id=target_list.board_id)
+
+
+@login_required
+def list_delete(request, list_id):
+    target_list = get_object_or_404(List, id=list_id, board__owner=request.user)
+    board_id = target_list.board_id
+    if request.method == "POST":
+        target_list.delete()
+    return redirect("board_detail", board_id=board_id)

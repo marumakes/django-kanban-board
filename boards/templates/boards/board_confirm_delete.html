@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Delete {{ board.name }}{% endblock %}
+{% block content %}
+<div class="max-w-md mx-auto bg-zinc-900 border border-zinc-800 p-6 rounded-lg shadow-lg">
+  <h1 class="text-xl font-bold mb-2 text-zinc-100">Delete "{{ board.name }}"?</h1>
+  <p class="text-sm text-zinc-400 mb-6">
+    This permanently deletes the board and every list and card inside it. This can't be undone.
+  </p>
+  <div class="flex gap-3">
+    <form method="post" action="{% url 'board_delete' board.id %}">
+      {% csrf_token %}
+      <button type="submit" class="bg-red-600 text-white text-sm px-4 py-2 rounded hover:bg-red-500">
+        Delete permanently
+      </button>
+    </form>
+    <a href="{% url 'board_detail' board.id %}"
+       class="text-sm text-zinc-400 px-4 py-2 rounded border border-zinc-700 hover:bg-zinc-800">
+      Cancel
+    </a>
+  </div>
+</div>
+{% endblock %}

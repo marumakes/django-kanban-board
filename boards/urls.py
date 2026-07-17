@@ -9,4 +9,9 @@ urlpatterns = [
     path("lists/<int:list_id>/cards/new/", views.card_create, name="card_create"),
     path("cards/<int:card_id>/", views.card_detail, name="card_detail"),
     path("cards/<int:card_id>/delete/", views.card_delete, name="card_delete"),
+    path("<int:board_id>/edit/", views.board_update, name="board_update"),
+    path("<int:board_id>/delete/", views.board_delete, name="board_delete"),
+    path("lists/<int:list_id>/edit/", views.list_update, name="list_update"),
+    path("lists/<int:list_id>/delete/", views.list_delete, name="list_delete"),
+
 ]

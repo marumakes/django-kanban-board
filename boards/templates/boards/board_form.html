@@ -1,12 +1,16 @@
 {% extends "base.html" %}
-{% block title %}New Board{% endblock %}
+{% block title %}{% if board %}Edit {{ board.name }}{% else %}New Board{% endif %}{% endblock %}
 {% block content %}
-<div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
-  <h1 class="text-xl font-bold mb-4 text-gray-800">New Board</h1>
-  <form method="post" class="space-y-3">
+<div class="max-w-md mx-auto bg-zinc-900 border border-zinc-800 p-6 rounded-lg shadow-lg">
+  <h1 class="text-xl font-bold mb-4 text-zinc-100">
+    {% if board %}Edit Board{% else %}New Board{% endif %}
+  </h1>
+  <form method="post" action="{% if board %}{% url 'board_update' board.id %}{% else %}{% url 'board_create' %}{% endif %}" class="space-y-3">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save</button>
+    <button type="submit" class="bg-emerald-600 text-white px-4 py-2 rounded hover:bg-emerald-500 text-sm font-medium">
+      Save
+    </button>
   </form>
 </div>
 {% endblock %}
