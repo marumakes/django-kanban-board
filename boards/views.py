@@ -1,7 +1,11 @@
+import json
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
 
 from .models import Board, List, Card
 from .forms import BoardForm, ListForm, CardForm
@@ -98,6 +102,20 @@ def card_delete(request, card_id):
 
 
 @login_required
+@require_POST
+def card_reorder(request):
+    data = json.loads(request.body)
+    target_list = get_object_or_404(List, id=data["list_id"], board__owner=request.user)
+    cards = Card.objects.filter(id__in=data["ordered_ids"], list__board__owner = request.user)
+    cards_by_id = {card.id: card for card in cards}
+    for position, card_id in enumerate(data["ordered_ids"]):
+        card = cards_by_id[int(card_id)]
+        card.list = target_list
+        card.position = position
+        card.save(update_fields=["list","position"])
+    return JsonResponse({"status": "ok"})
+
+@login_required
 def board_update(request, board_id):
     board = get_object_or_404(Board, id=board_id, owner=request.user)
     if request.method == "POST":
@@ -136,3 +154,17 @@ def list_delete(request, list_id):
     if request.method == "POST":
         target_list.delete()
     return redirect("board_detail", board_id=board_id)
+
+@login_required
+@require_POST
+def list_reorder(request, board_id):
+    board = get_object_or_404(Board, id=board_id, owner=request.user)
+    data = json.loads(request.body)
+    lists = List.objects.filter(id__in = data["ordered_ids"], board=board)
+    lists_by_id = {lst.id: lst for lst in lists}
+    for position, list_id in enumerate(data["ordered_ids"]):
+        lst = lists_by_id[int(list_id)]
+        lst.position = position
+        lst.save(update_fields=["position"])
+    return JsonResponse({"status": "ok"})
+

@@ -12,11 +12,14 @@
   </div>
 </div>
 
-<div class="flex gap-4 items-start overflow-x-auto pb-4">
+<div id="board-columns" class="flex gap-4 items-start overflow-x-auto pb-4">
   {% for list in lists %}
-  <div class="bg-zinc-900 border border-zinc-800 rounded-lg p-3 w-72 flex-shrink-0">
+  <div class="list-column bg-zinc-900 border border-zinc-800 rounded-lg p-3 w-72 flex-shrink-0" data-list-id="{{ list.id }}">
     <div class="flex items-center justify-between mb-3 px-1">
-      <h2 class="font-semibold text-zinc-200 text-sm truncate">{{ list.name }}</h2>
+      <div class="flex items-center gap-1 min-w-0">
+        <span class="list-drag-handle cursor-grab text-zinc-600 hover:text-zinc-400 select-none">&#8942;&#8942;</span>
+        <h2 class="font-semibold text-zinc-200 text-sm truncate">{{ list.name }}</h2>
+      </div>
 
       <details class="relative">
         <summary class="cursor-pointer text-zinc-500 hover:text-zinc-200 list-none px-1 select-none">&#8942;</summary>
@@ -37,14 +40,12 @@
       </details>
     </div>
 
-    <div class="space-y-2 mb-3">
+    <div class="card-list space-y-2 mb-3 min-h-[1.5rem]" data-list-id="{{ list.id }}">
       {% for card in list.cards.all %}
-      <a href="{% url 'card_detail' card.id %}"
-         class="block bg-zinc-800 border border-zinc-700 p-3 rounded text-sm text-zinc-100 hover:border-emerald-600 transition-colors">
+      <a href="{% url 'card_detail' card.id %}" data-card-id="{{ card.id }}"
+         class="block bg-zinc-800 border border-zinc-700 p-3 rounded text-sm text-zinc-100 hover:border-emerald-600 transition-colors cursor-grab">
         {{ card.title }}
       </a>
-      {% empty %}
-      <p class="text-xs text-zinc-600 px-1">No cards yet</p>
       {% endfor %}
     </div>
 
@@ -59,7 +60,7 @@
   </div>
   {% endfor %}
 
-  <div class="bg-zinc-900/40 border-2 border-dashed border-zinc-800 rounded-lg p-3 w-72 flex-shrink-0">
+  <div class="add-list-column bg-zinc-900/40 border-2 border-dashed border-zinc-800 rounded-lg p-3 w-72 flex-shrink-0">
     <h2 class="font-semibold text-zinc-500 mb-3 px-1 text-sm">Add another list</h2>
     <form method="post" action="{% url 'list_create' board.id %}" class="flex gap-1">
       {% csrf_token %}
@@ -71,4 +72,55 @@
     </form>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script>
+  function getCookie(name) {
+    const match = document.cookie.match("(^|;)\\s*" + name + "\\s*=\\s*([^;]+)");
+    return match ? match.pop() : "";
+  }
+
+  function postJSON(url, data) {
+    return fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: JSON.stringify(data),
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".card-list").forEach((el) => {
+      new Sortable(el, {
+        group: "cards",
+        animation: 150,
+        ghostClass: "opacity-40",
+        onEnd: (evt) => {
+          const container = evt.to;
+          const orderedIds = Array.from(container.children).map((c) => c.dataset.cardId);
+          postJSON("{% url 'card_reorder' %}", {
+            list_id: container.dataset.listId,
+            ordered_ids: orderedIds,
+          });
+        },
+      });
+    });
+
+    const boardColumns = document.getElementById("board-columns");
+    new Sortable(boardColumns, {
+      animation: 150,
+      handle: ".list-drag-handle",
+      filter: ".add-list-column",
+      ghostClass: "opacity-40",
+      onEnd: () => {
+        const orderedIds = Array.from(boardColumns.querySelectorAll(".list-column")).map(
+          (c) => c.dataset.listId
+        );
+        postJSON("{% url 'list_reorder' board.id %}", { ordered_ids: orderedIds });
+      },
+    });
+  });
+</script>
 {% endblock %}
