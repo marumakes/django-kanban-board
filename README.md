@@ -22,7 +22,7 @@ A kanban board - I started writing this as a way to get experience with Django b
 ## Getting Started
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/marumakes/django-kanban-board.git
 cd django-kanban-board
 python3 -m venv venv
 source venv/bin/activate
@@ -39,3 +39,7 @@ Visit `http://127.0.0.1:8000/` and sign up for an account.
 ```bash
 python manage.py test
 ```
+
+## License
+
+Released under the [MIT License](LICENSE).
