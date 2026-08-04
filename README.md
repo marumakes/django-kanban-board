@@ -34,6 +34,19 @@ python manage.py runserver
 
 Visit `http://127.0.0.1:8000/` and sign up for an account.
 
+### Configuration
+
+`SECRET_KEY` is read from the `DJANGO_SECRET_KEY` environment variable, falling
+back to an insecure key so the project runs out of the box for local development.
+Set a real one for any non-local use:
+
+```bash
+export DJANGO_SECRET_KEY="$(python -c 'from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())')"
+```
+
+Note that `DEBUG` is hardcoded to `True` — this project is a learning exercise and
+is not configured for production deployment.
+
 ## Running Tests
 
 ```bash
